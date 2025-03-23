@@ -1,27 +1,41 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
+<% layout('/layouts/boilerplate') %>
+
+
+
+<div class="row">
+    <div class="col-8 offset-2 mt-3">
+
+
     <h3>Edit your listing listing</h3>
     <form method="POST" action="/listings/<%= listing._id %>?_method=PUT " >
 
-        <input type="text" value="<%=listing.title%>" name="listing[title]">
-        <br />
-        <textarea name="listing[description]" ><%=listing.description%></textarea>
-        <br />
-        <input type="text" value="<%= listing.image %>" name="listing[image]">
-        <br />
-        <input type="number" value="<%=listing.price%>" name="listing[price]">
-        <br />
-        <input type="text" value="<%=listing.country%>" name="listing[country]">
-        <br />
-        <input type="text" value="<%=listing.location%>" name="listing[location]">
-        <br />
+        <div class="mb-3">
+            <label for="title" class="form-label">Title</label>
+            <input type="text" value="<%=listing.title%>" name="listing[title] " class="form-control" id="title"> <!--- id is required for ` for="title" ` to work --->
+        </div>
+        <div class="mb-3">
+            <label for="description" class="form-label">Description</label>
+            <textarea name="listing[description]" class="form-control"><%=listing.description%></textarea>
+        </div>
+        <div class="mb-3">
+            <label for="image" class="form-label">Image</label>
+            <input type="text" value="<%= listing.image %>" name="listing[image]" class="form-control">
+        </div>
+        <div class="row">
+            <div class="mb-3 col-md-4"> <!-- bootstrap grid 12 cols by defualt, make this 4-cols -->
+                <label for="price" class="form-label">Title</label>
+                <input type="number" value="<%=listing.price%>" name="listing[price]" class="form-control">
+            </div>
+            <div class="mb-3 col-md-8"> <!-- make this 8 out of 12 cols in bootstrap grid-->
+                <label for="country" class="form-label">Title</label>
+                <input type="text" value="<%=listing.country%>" name="listing[country]" class="form-control">
+            </div>
+        </div>
+        <div class="mb-3">
+            <label for="location" class="form-label">Title</label>
+            <input type="text" value="<%=listing.location%>" name="listing[location]" class="form-control">
+        </div>
 
-        <button>Edit</button> 
-</body>
-</html>
+        <button class="btn btn-dark edit-btn mb-3 mt-3">Edit</button> 
+    </div>
+</div>

@@ -1,7 +1,16 @@
-/* body {
-    background-color: green;
-} */
+body {
+    font-family: "Plus Jakarta Sans", sans-serif !important;
 
+    display:flex;
+    flex-direction: column;
+    min-height: 100vh;
+    
+}
+
+/* index.ejs */
+.container{
+    flex:1;
+}
 
 
 
@@ -60,4 +69,63 @@
 
     justify-content: center;
 
+}
+
+/* /views/listings/index.ejs */
+.card {
+    border:none !important;
+    margin-bottom: 2rem;
+
+}
+
+.card-img-top {
+    border-radius: 1rem !important;
+    width: 100% !important;
+    object-fit: cover !important;
+}
+
+
+.card-body{
+    padding:0 !important;
+}
+
+.listing-link {
+    text-decoration: none;
+}
+
+
+.card-img-overlay{
+    opacity: 0;
+}
+
+.card-img-overlay:hover{
+    opacity:0.15;
+    background-color: white;
+}
+
+/* new.ejs */
+.add-btn{
+    background-color: #fe424d !important;
+    border: none !important;
+}
+
+/* edit.ejs */
+.edit-btn{
+    background-color: #fe424d !important;
+    border: none !important; 
+}
+
+/* show.ejs */
+
+.show-image {
+    height: 30vh !important;
+}
+
+.btns{
+    display: flex;
+}
+
+.show-card{
+    padding-left: 0;
+    padding-right: 0;
 }
