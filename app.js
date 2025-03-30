@@ -5,6 +5,10 @@ const Listing = require("./models/listing.js")
 const path = require("path")
 const methodOverride= require("method-override")
 const ejsMate = require("ejs-mate");
+const wrapAsync= require("./utils/wrapAsync.js")
+const expressError= require("./utils/expressError.js")
+const {listingSchema} = require("./schema.js")  //use {destructuring when want to only import specific required}
+
 
 app.set("view engine", "ejs")
 app.set("views", path.join(__dirname,"views"))
@@ -28,16 +32,34 @@ main()
     console.log(err)
 })
 
+
+
+
+
 app.get("/", (req,res)=>{
     res.send("Home route working")
 })
 
+//joi schema validation 
+const validateListing= (req,res,next)=>{
+    let {error} = listingSchema.validate(req.body)
+    if (error){
+
+        let errorMsg= error.details.map( (el)=> el.message).join(",")
+        
+        throw new expressError(404,errorMsg)
+    }else{
+        next();
+    }
+}
+
 //INDEX route
-app.get("/listings", async(req,res)=>{
+app.get("/listings", wrapAsync(async(req,res)=>{
     const allListings = await Listing.find({});
     res.render("listings/index.ejs", {allListings})
 
 })
+)
 
 //Create new btn route   
 //ADDED before show route because "new" would be treated as :id 
@@ -48,21 +70,31 @@ app.get("/listings/new", (req,res)=>{
 
 
 //Show route
-app.get("/listings/:id", async (req,res)=>{
+app.get("/listings/:id", wrapAsync(async (req,res)=>{
     let {id}= req.params;
     const listing = await Listing.findById(id)
     res.render("listings/show.ejs", {listing})
 
 })
+)
+
+
+
 
 //Create Route
-app.post("/listings",async (req,res)=>{
+
+//validateListing is a middleware here
+app.post("/listings",validateListing, wrapAsync(async (req,res,next)=>{
+    
+
+
+
     const newListing= new Listing(req.body.listing);
     await newListing.save()
-
+    
     res.redirect("/listings");
-
-})
+    })
+)
 
 app.get("/listings/:id/edit", async (req,res)=>{
     let {id}= req.params;
@@ -73,38 +105,38 @@ app.get("/listings/:id/edit", async (req,res)=>{
 })
 
 // Update Route
-app.put("/listings/:id", async(req,res)=>{
+app.put("/listings/:id", validateListing, wrapAsync(async(req,res)=>{
+
     let {id}= req.params;
     await Listing.findByIdAndUpdate(id, {...req.body.listing});
 
     res.redirect(`/listings/${id}`)
 })
-
+);
 
 //DELETE ROUTE
-app.delete("/listings/:id", async (req,res)=>{
+app.delete("/listings/:id", wrapAsync(async (req,res)=>{
     let {id}= req.params;
     // console.log(id)
     let deletedListing= await Listing.findByIdAndDelete(id);
     console.log(deletedListing)
     res.redirect("/listings")
 })
+)
  
 
-// app.get("/testlisting", async(req,res)=>{
-//     let sampleListing = new Listing({
-//         title: "My New Villa ",
-//         description: "By the  beach",
-//         price: 1200,
-//         location: "Calangute, Goa",
-//         country: "India",
-//     })
+//for all OTHER routes, i.e unsuported routes.
+app.all("*", (req,res,next)=> {
+    next(new expressError(404,"Page Not found!!!, app.all"))
+});
 
-//     await sampleListing.save()
-//     console.log("sample was saved")
 
-//     res.send("successfull Testing")
-// })
+app.use((err, req,res,next)=>{
+    let {statusCode = 500, message="Something Went wrong"}= err;
+    res.status(statusCode).render("error.ejs", {err})
+    // res.status(statusCode).send(message)
+})
+
 
 app.listen(8080, ()=>{
     console.log("server is listeneing on port 8080")
