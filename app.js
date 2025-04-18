@@ -1,3 +1,6 @@
+require('dotenv').config()
+console.log(process.env.SECRET)
+
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
@@ -87,6 +90,7 @@ passport.deserializeUser(User.deserializeUser()); //retrieves full user obj from
 app.use((req, res, next) => {
   res.locals.success = req.flash("success");
   res.locals.error = req.flash("error");
+  res.locals.currUser = req.user //for navbar.ejs
 
   next();
 });
@@ -105,7 +109,7 @@ app.use((req, res, next) => {
 
 
 app.use("/listings", listingRouter);
-app.use("/listings/:id", reviewRouter);
+app.use("/listings/:id/reviews", reviewRouter);
 app.use("/", userRouter);
 
 
