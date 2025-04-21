@@ -7,7 +7,7 @@
 
 
     <h3>Edit your listing listing</h3>
-    <form method="POST" action="/listings/<%= listing._id %>?_method=PUT " novalidate class="needs-validation">
+    <form method="POST" action="/listings/<%= listing._id %>?_method=PUT " novalidate class="needs-validation" enctype="multipart/form-data">
 
         <div class="mb-3">
             <label for="title" class="form-label">Title</label>
@@ -26,9 +26,15 @@
                 Empty description!
             </div>
         </div>
+
+        <div>
+            Original listing image: <br /> 
+            <img src="<%= originalImageUrl %>">
+        </div>
+
         <div class="mb-3">
-            <label for="image" class="form-label">Image</label>
-            <input type="text" value="<%= listing.image %>" name="listing[image]" class="form-control" >
+            <label for="image" class="form-label">Upload new Image</label>
+            <input type="file"  name="listing[image]" class="form-control" >
         </div>
         <div class="row">
             <div class="mb-3 col-md-4"> <!-- bootstrap grid 12 cols by defualt, make this 4-cols -->

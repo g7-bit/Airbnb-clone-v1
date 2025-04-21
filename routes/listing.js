@@ -3,8 +3,10 @@ const router = express.Router();
 const wrapAsync = require("../utils/wrapAsync.js");
 const Listing = require("../models/listing.js");
 const { isLoggedIn, isOwner, validateListing } = require("../middleware.js");
+
 const multer  = require('multer')
-const upload = multer({ dest: 'uploads/' })
+const {storage} = require("../cloudConfig.js")
+const upload = multer({ storage })//dest: 'storage' i.e cloudinary 
 
 
 const listingController = require("../controllers/listings.js");
@@ -12,17 +14,15 @@ const listingController = require("../controllers/listings.js");
 router
   .route("/")
   .get(wrapAsync(listingController.index)) //INDEX ROUTE
-  // .post(
-  //   //Create Route
-  //   isLoggedIn,
-  //   validateListing,
-  //   wrapAsync(listingController.createListing)
-  // );
+  .post(
+    //Create Route
+    isLoggedIn,
+    upload.single("listing[image]"),
+    validateListing,
+    wrapAsync(listingController.createListing)
+  )
 
-  .post(upload.single("listing[image]"), (req,res)=>{
-    res.send(req.file)
-  })
-
+1
 
 //Create new btn route
 //ADDED before show route because "new" would be treated as :id
@@ -36,10 +36,12 @@ router
   //Show route
   .get(wrapAsync(listingController.showListing))
 
+  //UPDATE route
   .put(
     isLoggedIn,
     isOwner,
-    validateListing,
+    upload.single("listing[image]"),
+    // validateListing,  //to be changed to accomodate changes in model schema
     wrapAsync(listingController.updateListing)
   )
   //DELETE ROUTE
