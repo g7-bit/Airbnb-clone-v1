@@ -59,9 +59,7 @@ cookie: {
 },
 };
 
-app.get("/", (req, res) => {
-  res.send("Home route working");
-});
+
 
 app.use(session(sessionOptions));
 app.use(flash());
